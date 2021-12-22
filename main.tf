@@ -63,6 +63,47 @@ resource "aws_security_group" "sftp_allow" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "sftp-logging" {
+  name              = "SFTP logging"
+  retention_in_days = 30
+}
+
+data "aws_iam_policy_document" "sftp-logging" {
+  statement {
+    sid       = "CloudWatchAccessForAWSTransfer"
+    effect    = "Allow"
+
+    actions   = [
+      "logs:CreateLogStream",
+      "logs:DescribeLogStreams",
+      "logs:CreateLogGroup",
+      "logs:PutLogEvents"
+    ]
+
+    resources = ["$(aws_cloudwatch_log_group.sftp-logging.arn)"]
+  }
+}
+
+resource "aws_iam_policy" "sftp-logging" {
+  name        = "sftp-logging"
+  policy      = data.aws_iam_policy_document.sftp-logging.json
+  depends_on  = [data.aws_iam_policy_document.sftp-logging]
+}
+
+resource "aws_iam_role" "sftp-logging" {
+  name                = "sftp-logging"
+  assume_role_policy  = data.aws_iam_policy_document.sftp-logging.json
+  tags = {
+    tag-key = "SFTP"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "sftp-logging-attach" {
+  role       = aws_iam_role.sftp-logging.name
+  policy_arn = aws_iam_policy.sftp-logging.arn
+}
+
+
 data "aws_iam_policy_document" "sftp-s3" {
   statement {
     effect = "Allow"
@@ -133,6 +174,7 @@ resource "aws_iam_role_policy_attachment" "sftp-attach" {
 resource "aws_transfer_server" "this" {
   identity_provider_type = "SERVICE_MANAGED"
   endpoint_type          = "VPC"
+  logging_role           = join("", aws_iam_role.sftp-logging[*].arn)
   endpoint_details {
     vpc_id = var.vpc_id
     #vpc_endpoint_id = aws_vpc_endpoint.sftp.id # DEPRECATED BY AWS
