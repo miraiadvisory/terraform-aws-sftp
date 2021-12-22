@@ -64,7 +64,7 @@ resource "aws_security_group" "sftp_allow" {
 }
 
 resource "aws_cloudwatch_log_group" "sftp-logging" {
-  name              = "SFTP logging"
+  name              = "sftp-logging"
   retention_in_days = 30
 }
 
