@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "sftp-logging" {
       "logs:PutLogEvents"
     ]
 
-    resources = ["$(aws_cloudwatch_log_group.sftp-logging.arn)"]
+    resources = [aws_cloudwatch_log_group.sftp-logging.arn]
   }
 }
 
