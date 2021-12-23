@@ -64,7 +64,7 @@ resource "aws_security_group" "sftp_allow" {
 }
 
 resource "aws_cloudwatch_log_group" "sftp-logging" {
-  name              = "sftp-logging"
+  name              = "/aws/transfer/${aws_transfer_server.this.id}"
   retention_in_days = 30
 }
 
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "sftp-logging" {
       "logs:PutLogEvents"
     ]
 
-    resources = [aws_cloudwatch_log_group.sftp-logging.arn]
+    resources = ["${aws_cloudwatch_log_group.sftp-logging.arn}:*"]
   }
 }
 
