@@ -92,7 +92,19 @@ resource "aws_iam_policy" "sftp-logging" {
 
 resource "aws_iam_role" "sftp-logging" {
   name                = "sftp-logging"
-  assume_role_policy  = data.aws_iam_policy_document.sftp-logging.json
+  assume_role_policy  = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "transfer.amazonaws.com"
+        }
+      },
+    ]
+  })
   tags = {
     tag-key = "SFTP"
   }
