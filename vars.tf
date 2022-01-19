@@ -25,5 +25,10 @@ variable "zone_name" {
 
 variable "allowlist" {
   description = "allowlist IP from client"
-  type        = string
+  type        = list(any)
+}
+
+variable "sftp_policy" {
+  description = "S3 policy for SFTP"
+  type = string
 }
