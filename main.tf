@@ -14,14 +14,14 @@ resource "aws_security_group" "sftp_allow" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.allowlist]
+    cidr_blocks = var.allowlist
   }
 
   egress {
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = [var.allowlist]
+    cidr_blocks      = var.allowlist
   }
 
   tags = {
