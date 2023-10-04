@@ -1,3 +1,8 @@
+variable "pre_authentication_login_banner" {
+  description = "the pre-authentication banner message for the SFTP server"
+  type        = string
+}
+
 variable "subnet_ids" {
   description = "subnets in SFTP"
   type        = list(any)
