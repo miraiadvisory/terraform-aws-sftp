@@ -117,9 +117,7 @@ resource "aws_transfer_server" "this" {
     address_allocation_ids = [module.eip[var.subnet_ids[0]].eip_id, module.eip[var.subnet_ids[1]].eip_id, module.eip[var.subnet_ids[2]].eip_id]
     subnet_ids             = var.subnet_ids
   }
-  identity_provider_details {
-    pre_authentication_login_banner = var.pre_authentication_login_banner
-  }
+  pre_authentication_login_banner = var.pre_authentication_login_banner
 }
 
 resource "random_string" "sftp" {
