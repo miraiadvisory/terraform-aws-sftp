@@ -37,3 +37,8 @@ variable "sftp_policy" {
   description = "S3 policy for SFTP"
   type = string
 }
+
+variable "sftp_policy_output" {
+  description = "S3 policy for SFTP output"
+  type = string
+}

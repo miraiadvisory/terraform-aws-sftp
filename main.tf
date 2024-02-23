@@ -107,6 +107,11 @@ resource "aws_iam_role_policy_attachment" "sftp-attach" {
   policy_arn = var.sftp_policy
 }
 
+resource "aws_iam_role_policy_attachment" "sftp-attach-output" {
+  role       = aws_iam_role.sftp-s3.name
+  policy_arn = var.sftp_policy_output
+}
+
 resource "aws_transfer_server" "this" {
   pre_authentication_login_banner = var.pre_authentication_login_banner
   identity_provider_type = "SERVICE_MANAGED"
