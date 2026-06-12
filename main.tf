@@ -129,6 +129,28 @@ resource "aws_iam_role_policy_attachment" "sftp-upload-attach" {
   policy_arn = var.sftp_policy_upload
 }
 
+resource "aws_iam_role" "sftp-s3-output" {
+  name = "sftp-s3-output"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "transfer.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  tags = {
+    tag-key = "SFTP"
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "sftp-attach" {
   role       = aws_iam_role.sftp-s3.name
   policy_arn = var.sftp_policy
