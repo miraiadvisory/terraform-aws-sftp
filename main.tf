@@ -18,10 +18,10 @@ resource "aws_security_group" "sftp_allow" {
   }
 
   egress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = var.allowlist
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.allowlist
   }
 
   tags = {
@@ -36,10 +36,10 @@ resource "aws_cloudwatch_log_group" "sftp-logging" {
 
 data "aws_iam_policy_document" "sftp-logging" {
   statement {
-    sid       = "CloudWatchAccessForAWSTransfer"
-    effect    = "Allow"
+    sid    = "CloudWatchAccessForAWSTransfer"
+    effect = "Allow"
 
-    actions   = [
+    actions = [
       "logs:CreateLogStream",
       "logs:DescribeLogStreams",
       "logs:CreateLogGroup",
@@ -51,14 +51,14 @@ data "aws_iam_policy_document" "sftp-logging" {
 }
 
 resource "aws_iam_policy" "sftp-logging" {
-  name        = "sftp-logging"
-  policy      = data.aws_iam_policy_document.sftp-logging.json
-  depends_on  = [data.aws_iam_policy_document.sftp-logging]
+  name       = "sftp-logging"
+  policy     = data.aws_iam_policy_document.sftp-logging.json
+  depends_on = [data.aws_iam_policy_document.sftp-logging]
 }
 
 resource "aws_iam_role" "sftp-logging" {
-  name                = "sftp-logging"
-  assume_role_policy  = jsonencode({
+  name = "sftp-logging"
+  assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
@@ -162,12 +162,13 @@ resource "aws_iam_role_policy_attachment" "sftp-attach-output" {
 }
 
 resource "aws_transfer_server" "this" {
-  pre_authentication_login_banner = var.pre_authentication_login_banner
-  identity_provider_type = "SERVICE_MANAGED"
-  endpoint_type          = "VPC"
-  logging_role           = join("", aws_iam_role.sftp-logging[*].arn)
+  pre_authentication_login_banner  = var.pre_authentication_login_banner
+  post_authentication_login_banner = var.post_authentication_login_banner
+  identity_provider_type           = "SERVICE_MANAGED"
+  endpoint_type                    = "VPC"
+  logging_role                     = join("", aws_iam_role.sftp-logging[*].arn)
   endpoint_details {
-    vpc_id = var.vpc_id
+    vpc_id                 = var.vpc_id
     security_group_ids     = [aws_security_group.sftp_allow.id]
     address_allocation_ids = [module.eip[var.subnet_ids[0]].eip_id, module.eip[var.subnet_ids[1]].eip_id, module.eip[var.subnet_ids[2]].eip_id]
     subnet_ids             = var.subnet_ids

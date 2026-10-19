@@ -3,6 +3,12 @@ variable "pre_authentication_login_banner" {
   type        = string
 }
 
+variable "post_authentication_login_banner" {
+  description = "Message shown to users after they log in (usage rules). null leaves it unset."
+  type        = string
+  default     = null
+}
+
 variable "subnet_ids" {
   description = "subnets in SFTP"
   type        = list(any)
@@ -35,12 +41,12 @@ variable "allowlist" {
 
 variable "sftp_policy" {
   description = "S3 policy for SFTP"
-  type = string
+  type        = string
 }
 
 variable "sftp_policy_output" {
   description = "S3 policy for SFTP output"
-  type = string
+  type        = string
 }
 
 variable "sftp_policy_upload" {
